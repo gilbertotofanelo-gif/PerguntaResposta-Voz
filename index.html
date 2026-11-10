@@ -97,7 +97,7 @@
     // COLE AQUI A URL DO SEU WEB APP DO APPS SCRIPT
     // =====================================================
     const URL_BACKEND = "https://script.google.com/macros/s/AKfycbyAFGyR93OgcZpwFwjiu4x2YUDLOKxw-9_v566SCQavtDx1Yb__YtR_DNybcDTq4tov/exec";
-
+                          
     const perguntas = [
       { chave: "nome", texto: "Fale seu nome completo." },
       { chave: "idade", texto: "Qual é a sua idade?" },
@@ -283,10 +283,13 @@ function salvarNaPlanilha() {
     return;
   }
 
+  campoStatus.innerText = "Salvando informações na planilha...";
+
   fetch(URL_BACKEND, {
     method: "POST",
+    // Importante: usar text/plain evita o preflight CORS
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "text/plain;charset=utf-8"
     },
     body: JSON.stringify(respostas)
   })
@@ -306,6 +309,7 @@ function salvarNaPlanilha() {
     if (campoStatus) {
       campoStatus.innerText = "Erro de comunicação: " + erro.message;
     }
+    console.error("Erro completo:", erro);
   });
 }
 
