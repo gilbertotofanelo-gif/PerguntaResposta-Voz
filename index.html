@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Coleta de Voz</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f5f7;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      max-width: 450px;
+      margin: 40px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+    h2 { color: #245b87; }
+    #pergunta {
+      font-size: 21px;
+      margin: 30px 0;
+      font-weight: bold;
+    }
+    input {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      margin: 7px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 17px;
+      cursor: pointer;
+      background: #246b9e;
+      color: white;
+    }
+    button:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+    #status {
+      margin-top: 20px;
+      color: #444;
+      min-height: 40px;
+      line-height: 1.5;
+    }
+    .secundario { background: #5b6570; }
+    .oculto { display: none; }
+    .subtitulo {
+      font-size: 17px;
+      color: #333;
+      margin: 25px 0 15px 0;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Coleta de Voz</h2>
+
+    <p id="introducao">Escolha como deseja responder às perguntas.</p>
+
+    <div id="escolhaModo">
+      <p class="subtitulo">Como deseja abrir a ocorrência?</p>
+      <button id="modoVoz">🎤 Abrir ocorrência com voz</button>
+      <button id="modoDigitando" class="secundario">⌨️ Abrir ocorrência digitando</button>
+    </div>
+
+    <p id="progresso"></p>
+    <div id="pergunta"></div>
+
+    <div id="areaResposta" class="oculto">
+      <input type="text" id="resposta" placeholder="Sua resposta aparecerá aqui" autocomplete="off">
+      <button id="responder">🎤 Responder por voz</button>
+      <button id="proximo" class="secundario">Confirmar e continuar</button>
+    </div>
+
+    <p id="status"></p>
+  </div>
+
+  <script>
+    // =====================================================
+    // COLE AQUI A URL DO SEU WEB APP DO APPS SCRIPT
+    // =====================================================
+    const URL_BACKEND = "COLE_AQUI_A_URL_DO_SEU_WEB_APP";
+
+    const perguntas = [
+      { chave: "nome", texto: "Fale seu nome completo." },
+      { chave: "idade", texto: "Qual é a sua idade?" },
+      { chave: "cidade", texto: "Qual cidade você mora?" },
+      { chave: "hospital", texto: "Em hospital, vai ser internado?" }
+    ];
+
+    let indice = 0;
+    let respostas = {};
+    let reconhecimento = null;
+    let ouvindo = false;
+    let modoVoz = true;
+
+    const SpeechAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const botaoModoVoz = document.getElementById("modoVoz");
+    const botaoModoDigitando = document.getElementById("modoDigitando");
+    const botaoResponder = document.getElementById("responder");
+    const botaoProximo = document.getElementById("proximo");
+    const campoResposta = document.getElementById("resposta");
+    const campoPergunta = document.getElementById("pergunta");
+    const campoStatus = document.getElementById("status");
+    const escolhaModo = document.getElementById("escolhaModo");
+    const introducao = document.getElementById("introducao");
+    const areaResposta = document.getElementById("areaResposta");
+    const progresso = document.getElementById("progresso");
+
+    function falar(texto, aoTerminar) {
+      if (!modoVoz || !window.speechSynthesis) {
+        if (aoTerminar) aoTerminar();
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const mensagem = new SpeechSynthesisUtterance(texto);
+      mensagem.lang = "pt-BR";
+      if (aoTerminar) mensagem.onend = aoTerminar;
+      window.speechSynthesis.speak(mensagem);
+    }
+
+    function iniciar(comVoz) {
+      modoVoz = comVoz;
+      indice = 0;
+      respostas = {};
+
+      if (escolhaModo) escolhaModo.classList.add("oculto");
+      if (introducao) {
+        introducao.innerText = comVoz
+          ? "Responda às perguntas utilizando sua voz."
+          : "Digite suas respostas nas perguntas abaixo.";
+      }
+      if (areaResposta) areaResposta.classList.remove("oculto");
+
+      if (!comVoz && botaoResponder) {
+        botaoResponder.classList.add("oculto");
+      }
+
+      mostrarPergunta();
+    }
+
+    function mostrarPergunta() {
+      if (indice >= perguntas.length) {
+        finalizar();
+        return;
+      }
+
+      const pergunta = perguntas[indice];
+      if (campoPergunta) campoPergunta.innerText = pergunta.texto;
+      if (progresso) progresso.innerText = `Pergunta ${indice + 1} de ${perguntas.length}`;
+      if (campoResposta) {
+        campoResposta.value = "";
+        campoResposta.blur(); // não abre teclado
+      }
+      if (campoStatus) campoStatus.innerText = "";
+
+      if (modoVoz) {
+        falar(pergunta.texto, function () {
+          if (SpeechAPI) {
+            botaoResponder.textContent = "🎤 Toque para falar";
+            botaoResponder.classList.remove("oculto");
+          } else {
+            botaoResponder.textContent = "Digite sua resposta";
+            if (campoResposta) campoResposta.focus();
+          }
+        });
+      } else {
+        if (campoResposta) campoResposta.focus();
+      }
+    }
+
+    function ouvir() {
+      if (!modoVoz) return;
+
+      if (!SpeechAPI) {
+        if (campoStatus) campoStatus.innerText = "Seu navegador não suporta reconhecimento de voz. Digite a resposta.";
+        if (campoResposta) campoResposta.focus();
+        return;
+      }
+
+      if (ouvindo) return;
+
+      // Garante que o teclado não abra
+      if (campoResposta) campoResposta.blur();
+
+      reconhecimento = new SpeechAPI();
+      reconhecimento.lang = "pt-BR";
+      reconhecimento.continuous = false;
+      reconhecimento.interimResults = false;
+
+      ouvindo = true;
+      if (botaoResponder) botaoResponder.disabled = true;
+      if (campoStatus) campoStatus.innerText = "🎤 Estou ouvindo... Fale agora.";
+
+      reconhecimento.onresult = function (evento) {
+        const texto = evento.results[0][0].transcript;
+        if (campoResposta) campoResposta.value = texto;
+        if (campoStatus) campoStatus.innerText = "Resposta captada: " + texto;
+      };
+
+      reconhecimento.onerror = function (evento) {
+        let msg = "Não foi possível captar a voz";
+        if (evento.error === "not-allowed") {
+          msg = "Permissão do microfone negada. Ative nas configurações do Safari.";
+        } else if (evento.error === "no-speech") {
+          msg = "Nenhuma fala detectada. Tente novamente.";
+        } else {
+          msg += ": " + evento.error;
+        }
+        if (campoStatus) campoStatus.innerText = msg + " Você também pode digitar.";
+      };
+
+      reconhecimento.onend = function () {
+        ouvindo = false;
+        if (botaoResponder) botaoResponder.disabled = false;
+        if (campoResposta && !campoResposta.value && campoStatus) {
+          campoStatus.innerText = "Você pode tentar novamente ou digitar sua resposta.";
+        }
+      };
+
+      try {
+        reconhecimento.start();
+      } catch (erro) {
+        ouvindo = false;
+        if (botaoResponder) botaoResponder.disabled = false;
+        if (campoStatus) {
+          campoStatus.innerText = "Não foi possível iniciar o microfone. Digite sua resposta.";
+        }
+      }
+    }
+
+    function proximo() {
+      const resposta = campoResposta ? campoResposta.value.trim() : "";
+      if (!resposta) {
+        if (campoStatus) {
+          campoStatus.innerText = "Por favor, informe uma resposta antes de continuar.";
+        }
+        return;
+      }
+
+      if (ouvindo && reconhecimento) {
+        reconhecimento.stop();
+      }
+
+      respostas[perguntas[indice].chave] = resposta;
+      indice++;
+      mostrarPergunta();
+    }
+
+    function finalizar() {
+      if (areaResposta) areaResposta.classList.add("oculto");
+      if (campoPergunta) campoPergunta.innerText = "Obrigado! Suas respostas foram registradas.";
+      if (progresso) progresso.innerText = "";
+      if (campoStatus) campoStatus.innerText = "Salvando informações na planilha...";
+
+      falar("Obrigado! Suas respostas foram registradas.");
+      salvarNaPlanilha();
+    }
+
+    function salvarNaPlanilha() {
+      if (!URL_BACKEND || URL_BACKEND.includes("COLE_AQUI")) {
+        if (campoStatus) {
+          campoStatus.innerText = "Erro: URL do backend não configurada.";
+        }
+        return;
+      }
+
+      fetch(URL_BACKEND, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(respostas)
+      })
+      .then(function (resposta) {
+        return resposta.json();
+      })
+      .then(function (resultado) {
+        if (campoStatus) {
+          if (resultado.sucesso) {
+            campoStatus.innerText = "✅ Dados salvos com sucesso!";
+          } else {
+            campoStatus.innerText = "Erro ao salvar: " + resultado.mensagem;
+          }
+        }
+      })
+      .catch(function (erro) {
+        if (campoStatus) {
+          campoStatus.innerText = "Erro de comunicação: " + erro.message;
+        }
+      });
+    }
+
+    // Eventos
+    if (botaoModoVoz) botaoModoVoz.onclick = () => iniciar(true);
+    if (botaoModoDigitando) botaoModoDigitando.onclick = () => iniciar(false);
+    if (botaoResponder) botaoResponder.onclick = ouvir;
+    if (botaoProximo) botaoProximo.onclick = proximo;
+  </script>
+</body>
+</html>
