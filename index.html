@@ -96,7 +96,7 @@
     // =====================================================
     // COLE AQUI A URL DO SEU WEB APP DO APPS SCRIPT
     // =====================================================
-    const URL_BACKEND = "COLE_AQUI_A_URL_DO_SEU_WEB_APP";
+    const URL_BACKEND = "https://script.google.com/macros/s/AKfycbyAFGyR93OgcZpwFwjiu4x2YUDLOKxw-9_v566SCQavtDx1Yb__YtR_DNybcDTq4tov/exec";
 
     const perguntas = [
       { chave: "nome", texto: "Fale seu nome completo." },
@@ -275,39 +275,39 @@
       salvarNaPlanilha();
     }
 
-    function salvarNaPlanilha() {
-      if (!URL_BACKEND || URL_BACKEND.includes("COLE_AQUI")) {
-        if (campoStatus) {
-          campoStatus.innerText = "Erro: URL do backend não configurada.";
-        }
-        return;
-      }
-
-      fetch(URL_BACKEND, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(respostas)
-      })
-      .then(function (resposta) {
-        return resposta.json();
-      })
-      .then(function (resultado) {
-        if (campoStatus) {
-          if (resultado.sucesso) {
-            campoStatus.innerText = "✅ Dados salvos com sucesso!";
-          } else {
-            campoStatus.innerText = "Erro ao salvar: " + resultado.mensagem;
-          }
-        }
-      })
-      .catch(function (erro) {
-        if (campoStatus) {
-          campoStatus.innerText = "Erro de comunicação: " + erro.message;
-        }
-      });
+function salvarNaPlanilha() {
+  if (!URL_BACKEND || URL_BACKEND.includes("COLE_AQUI") || URL_BACKEND.trim() === "") {
+    if (campoStatus) {
+      campoStatus.innerText = "Erro: URL do backend não configurada.";
     }
+    return;
+  }
+
+  fetch(URL_BACKEND, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(respostas)
+  })
+  .then(function (resposta) {
+    return resposta.json();
+  })
+  .then(function (resultado) {
+    if (campoStatus) {
+      if (resultado.sucesso) {
+        campoStatus.innerText = "✅ Dados salvos com sucesso!";
+      } else {
+        campoStatus.innerText = "Erro ao salvar: " + resultado.mensagem;
+      }
+    }
+  })
+  .catch(function (erro) {
+    if (campoStatus) {
+      campoStatus.innerText = "Erro de comunicação: " + erro.message;
+    }
+  });
+}
 
     // Eventos
     if (botaoModoVoz) botaoModoVoz.onclick = () => iniciar(true);
