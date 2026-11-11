@@ -1,323 +1,1227 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Coleta de Voz</title>
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <meta name="theme-color" content="#176b9b">
+
+  <title>Abertura de Ocorrência Hospitalar</title>
 
   <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      background: #f3f5f7;
+      background: #f2f5f8;
       margin: 0;
-      padding: 20px;
+      padding: 16px;
+      color: #202832;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+      margin: 18px auto;
+      background: #fff;
+      padding: 22px;
+      border-radius: 16px;
+      box-shadow: 0 3px 14px rgba(0,0,0,.08);
+    }
+
+    h1 {
+      color: #176b9b;
+      font-size: 23px;
+      margin: 0 0 8px;
       text-align: center;
     }
-    .container {
-      max-width: 450px;
-      margin: 40px auto;
-      background: white;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+
+    .intro {
+      color: #59636e;
+      text-align: center;
+      line-height: 1.45;
+      margin: 0 0 20px;
     }
-    h2 { color: #245b87; }
+
+    .progress-wrap {
+      background: #e7edf2;
+      border-radius: 20px;
+      height: 8px;
+      overflow: hidden;
+      margin: 16px 0 8px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      background: #2183b8;
+      transition: width .2s;
+    }
+
+    #progresso {
+      color: #65717d;
+      font-size: 13px;
+      text-align: center;
+      margin: 0 0 22px;
+    }
+
     #pergunta {
       font-size: 21px;
-      margin: 30px 0;
-      font-weight: bold;
+      line-height: 1.35;
+      font-weight: 700;
+      margin: 20px 0;
+      text-align: left;
     }
-    input {
-      box-sizing: border-box;
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin: 12px 0 7px;
+    }
+
+    input, textarea, select {
       width: 100%;
-      padding: 15px;
-      font-size: 18px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      margin-bottom: 15px;
+      padding: 14px;
+      font-size: 17px;
+      border: 1px solid #cbd3da;
+      border-radius: 9px;
+      background: #fff;
+      color: #202832;
+      font-family: inherit;
     }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
     button {
       width: 100%;
       padding: 15px;
       margin: 7px 0;
-      border: none;
-      border-radius: 8px;
+      border: 0;
+      border-radius: 9px;
       font-size: 17px;
+      font-weight: 600;
       cursor: pointer;
-      background: #246b9e;
-      color: white;
+      background: #176b9b;
+      color: #fff;
+      touch-action: manipulation;
     }
+
     button:disabled {
-      background: #aaa;
+      background: #9aa5ae;
       cursor: not-allowed;
     }
+
+    button.secundario {
+      background: #5d6872;
+    }
+
+    button.claro {
+      background: #e9f1f6;
+      color: #185b82;
+      border: 1px solid #c9dce8;
+    }
+
+    button.microfone {
+      background: #16784b;
+    }
+
+    button.microfone.ativo {
+      background: #b33b36;
+    }
+
+    .botoes-duplos {
+      display: flex;
+      gap: 9px;
+    }
+
+    .botoes-duplos button {
+      flex: 1;
+    }
+
     #status {
-      margin-top: 20px;
-      color: #444;
-      min-height: 40px;
-      line-height: 1.5;
+      min-height: 42px;
+      margin: 16px 0 0;
+      line-height: 1.45;
+      color: #46515b;
+      text-align: center;
+      overflow-wrap: anywhere;
     }
-    .secundario { background: #5b6570; }
-    .oculto { display: none; }
-    .subtitulo {
-      font-size: 17px;
-      color: #333;
-      margin: 25px 0 15px 0;
-      font-weight: bold;
+
+    .nota {
+      color: #68737d;
+      font-size: 13px;
+      line-height: 1.4;
+      margin: 8px 0;
     }
+
+    .oculto {
+      display: none !important;
+    }
+
+    .resumo-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #e5e9ed;
+    }
+
+    .resumo-titulo {
+      font-size: 13px;
+      color: #68737d;
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+
+    .resumo-valor {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      line-height: 1.4;
+    }
+
+    .resumo-item button {
+      padding: 9px;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 380px) {
+
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 17px;
+        margin: 8px auto;
+      }
+
+      h1 {
+        font-size: 21px;
+      }
+
+      #pergunta {
+        font-size: 19px;
+      }
+
+    }
+
   </style>
+
 </head>
+
 <body>
 
-  <div class="container">
-    <h2>Coleta de Voz</h2>
+  <main class="container">
 
-    <p id="introducao">Escolha como deseja responder às perguntas.</p>
+    <h1>Abertura de Ocorrência Hospitalar</h1>
 
-    <div id="escolhaModo">
-      <p class="subtitulo">Como deseja abrir a ocorrência?</p>
-      <button id="modoVoz">🎤 Abrir ocorrência com voz</button>
-      <button id="modoDigitando" class="secundario">⌨️ Abrir ocorrência digitando</button>
-    </div>
+    <p class="intro" id="introducao">
+      Responda por voz ou digite.
+      Ao final, confira as informações antes de gravar.
+    </p>
 
-    <p id="progresso"></p>
-    <div id="pergunta"></div>
+    <!-- TELA INICIAL -->
 
-    <div id="areaResposta" class="oculto">
-      <input type="text" id="resposta" placeholder="Sua resposta aparecerá aqui" autocomplete="off">
-      <button id="responder">🎤 Responder por voz</button>
-      <button id="proximo" class="secundario">Confirmar e continuar</button>
-    </div>
+    <section id="inicio">
 
-    <p id="status"></p>
-  </div>
+      <button id="iniciar">
+        Iniciar registro
+      </button>
+
+      <p class="nota">
+        As respostas não são gravadas até você conferir e confirmar o envio.
+      </p>
+
+    </section>
+
+
+    <!-- PERGUNTAS -->
+
+    <section id="areaPergunta" class="oculto">
+
+      <div class="progress-wrap">
+        <div class="progress-bar" id="barraProgresso"></div>
+      </div>
+
+      <p id="progresso"></p>
+
+      <div id="pergunta"></div>
+
+      <div id="areaCampo"></div>
+
+      <p class="nota" id="dica"></p>
+
+      <button class="microfone" id="botaoVoz" type="button">
+        🎤 Responder por voz
+      </button>
+
+      <div class="botoes-duplos">
+
+        <button class="secundario" id="voltar" type="button">
+          Voltar
+        </button>
+
+        <button id="continuar" type="button">
+          Confirmar e continuar
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- REVISÃO -->
+
+    <section id="areaRevisao" class="oculto">
+
+      <h2>Confira os dados</h2>
+
+      <p class="nota">
+        Use os botões de correção se precisar alterar alguma resposta.
+      </p>
+
+      <div id="resumo"></div>
+
+      <button id="gravar" type="button">
+        Confirmar e gravar ocorrência
+      </button>
+
+      <button class="secundario" id="voltarPerguntas" type="button">
+        Voltar às perguntas
+      </button>
+
+    </section>
+
+
+    <!-- FINALIZAÇÃO -->
+
+    <section id="areaFinal" class="oculto">
+
+      <h2 id="tituloFinal">Registro</h2>
+
+      <p id="mensagemFinal"></p>
+
+      <button id="novoRegistro" type="button">
+        Abrir nova ocorrência
+      </button>
+
+    </section>
+
+    <p id="status" role="status" aria-live="polite"></p>
+
+  </main>
+
 
   <script>
-    // =====================================================
-    // COLE AQUI A URL DO SEU WEB APP DO APPS SCRIPT
-    // =====================================================
-    const URL_BACKEND = "https://script.google.com/macros/s/AKfycbyAFGyR93OgcZpwFwjiu4x2YUDLOKxw-9_v566SCQavtDx1Yb__YtR_DNybcDTq4tov/exec";
-                          
+
+    // ==================================================
+    // URL DO WEB APP DO GOOGLE APPS SCRIPT
+    // ==================================================
+
+    const URL_BACKEND =
+      'https://script.google.com/macros/s/AKfycbyAFGyR93OgcZpwFwjiu4x2YUDLOKxw-9_v566SCQavtDx1Yb__YtR_DNybcDTq4tov/exec';
+
+
+    // ==================================================
+    // SEQUÊNCIA FIXA DAS PERGUNTAS
+    // ==================================================
+
     const perguntas = [
-      { chave: "nome", texto: "Fale seu nome completo." },
-      { chave: "idade", texto: "Qual é a sua idade?" },
-      { chave: "cidade", texto: "Qual cidade você mora?" },
-      { chave: "hospital", texto: "Em hospital, vai ser internado?" }
+
+      {
+        chave: 'nomePaciente',
+        texto: 'Nome do Paciente',
+        tipo: 'text',
+        placeholder: 'Nome completo do paciente'
+      },
+
+      {
+        chave: 'contatoPaciente',
+        texto: 'Contato do paciente',
+        tipo: 'tel',
+        placeholder: 'Telefone com DDD'
+      },
+
+      {
+        chave: 'congregacao',
+        texto: 'Congregação do Paciente',
+        tipo: 'text',
+        placeholder: 'Nome da congregação'
+      },
+
+      {
+        chave: 'cidadePaciente',
+        texto: 'Cidade do paciente',
+        tipo: 'text',
+        placeholder: 'Cidade'
+      },
+
+      {
+        chave: 'anciaoResponsavel',
+        texto: 'Ancião Responsável',
+        tipo: 'text',
+        placeholder: 'Nome do ancião responsável'
+      },
+
+      {
+        chave: 'contatoAnciao',
+        texto: 'Contato do ancião',
+        tipo: 'tel',
+        placeholder: 'Telefone com DDD'
+      },
+
+      {
+        chave: 'hospital',
+        texto: 'Hospital de internação',
+        tipo: 'text',
+        placeholder: 'Nome do hospital'
+      },
+
+      {
+        chave: 'dataInternacao',
+        texto: 'Data da internação',
+        tipo: 'date',
+        placeholder: ''
+      },
+
+      {
+        chave: 'problemaMedico',
+        texto: 'Qual o problema médico?',
+        tipo: 'textarea',
+        placeholder: 'Descreva brevemente o problema médico'
+      },
+
+      {
+        chave: 'tipoAcionamento',
+        texto: 'Qual o tipo de acionamento?',
+        tipo: 'select',
+        opcoes: [
+          'Eletiva',
+          'Emergência (ação imediata)',
+          'Urgência (Atenção Rápida)',
+          'Outro'
+        ]
+      },
+
+      {
+        chave: 'relatoComplementar',
+        texto: 'Relato complementar',
+        tipo: 'textarea',
+        placeholder: 'Acrescente outras informações importantes (opcional)'
+      }
+
     ];
 
+
+    // ==================================================
+    // VARIÁVEIS
+    // ==================================================
+
+    const SpeechAPI =
+      window.SpeechRecognition ||
+      window.webkitSpeechRecognition;
+
     let indice = 0;
+
     let respostas = {};
+
     let reconhecimento = null;
+
     let ouvindo = false;
-    let modoVoz = true;
 
-    const SpeechAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let envioEmAndamento = false;
 
-    const botaoModoVoz = document.getElementById("modoVoz");
-    const botaoModoDigitando = document.getElementById("modoDigitando");
-    const botaoResponder = document.getElementById("responder");
-    const botaoProximo = document.getElementById("proximo");
-    const campoResposta = document.getElementById("resposta");
-    const campoPergunta = document.getElementById("pergunta");
-    const campoStatus = document.getElementById("status");
-    const escolhaModo = document.getElementById("escolhaModo");
-    const introducao = document.getElementById("introducao");
-    const areaResposta = document.getElementById("areaResposta");
-    const progresso = document.getElementById("progresso");
+    let requestId = '';
 
-    function falar(texto, aoTerminar) {
-      if (!modoVoz || !window.speechSynthesis) {
-        if (aoTerminar) aoTerminar();
-        return;
-      }
-      window.speechSynthesis.cancel();
-      const mensagem = new SpeechSynthesisUtterance(texto);
-      mensagem.lang = "pt-BR";
-      if (aoTerminar) mensagem.onend = aoTerminar;
-      window.speechSynthesis.speak(mensagem);
+
+    const el = id => document.getElementById(id);
+
+
+    // ==================================================
+    // CONTROLE DAS TELAS
+    // ==================================================
+
+    function mostrar(secao) {
+
+      [
+        'inicio',
+        'areaPergunta',
+        'areaRevisao',
+        'areaFinal'
+      ].forEach(id => {
+
+        el(id).classList.add('oculto');
+
+      });
+
+      el(secao).classList.remove('oculto');
+
     }
 
-    function iniciar(comVoz) {
-      modoVoz = comVoz;
+
+    // ==================================================
+    // LEITURA DA PERGUNTA
+    // ==================================================
+
+    function falar(texto) {
+
+      if (!window.speechSynthesis) return;
+
+      window.speechSynthesis.cancel();
+
+      const fala = new SpeechSynthesisUtterance(texto);
+
+      fala.lang = 'pt-BR';
+
+      window.speechSynthesis.speak(fala);
+
+    }
+
+
+    // ==================================================
+    // INICIAR OCORRÊNCIA
+    // ==================================================
+
+    function iniciar() {
+
       indice = 0;
+
       respostas = {};
 
-      if (escolhaModo) escolhaModo.classList.add("oculto");
-      if (introducao) {
-        introducao.innerText = comVoz
-          ? "Responda às perguntas utilizando sua voz."
-          : "Digite suas respostas nas perguntas abaixo.";
-      }
-      if (areaResposta) areaResposta.classList.remove("oculto");
+      requestId = criarId();
 
-      if (!comVoz && botaoResponder) {
-        botaoResponder.classList.add("oculto");
-      }
+      el('status').textContent = '';
+
+      mostrar('areaPergunta');
 
       mostrarPergunta();
+
     }
+
+
+    function criarId() {
+
+      if (window.crypto && crypto.randomUUID) {
+        return crypto.randomUUID();
+      }
+
+      return 'oc-' + Date.now() + '-' +
+        Math.random().toString(36).slice(2);
+
+    }
+
+
+    // ==================================================
+    // MOSTRAR PERGUNTA
+    // ==================================================
 
     function mostrarPergunta() {
+
       if (indice >= perguntas.length) {
-        finalizar();
+
+        montarResumo();
+
         return;
+
       }
 
-      const pergunta = perguntas[indice];
-      if (campoPergunta) campoPergunta.innerText = pergunta.texto;
-      if (progresso) progresso.innerText = `Pergunta ${indice + 1} de ${perguntas.length}`;
-      if (campoResposta) {
-        campoResposta.value = "";
-        campoResposta.blur(); // não abre teclado
-      }
-      if (campoStatus) campoStatus.innerText = "";
+      pararVoz();
 
-      if (modoVoz) {
-        falar(pergunta.texto, function () {
-          if (SpeechAPI) {
-            botaoResponder.textContent = "🎤 Toque para falar";
-            botaoResponder.classList.remove("oculto");
-          } else {
-            botaoResponder.textContent = "Digite sua resposta";
-            if (campoResposta) campoResposta.focus();
-          }
+      const p = perguntas[indice];
+
+      el('pergunta').textContent = p.texto;
+
+      el('progresso').textContent =
+        `Pergunta ${indice + 1} de ${perguntas.length}`;
+
+      el('barraProgresso').style.width =
+        `${((indice + 1) / perguntas.length) * 100}%`;
+
+      el('areaCampo').innerHTML = '';
+
+      el('status').textContent = '';
+
+      el('dica').textContent = '';
+
+      let campo;
+
+
+      // Campo de seleção.
+
+      if (p.tipo === 'select') {
+
+        campo = document.createElement('select');
+
+        campo.id = 'campoAtual';
+
+        const vazio = document.createElement('option');
+
+        vazio.value = '';
+
+        vazio.textContent = 'Selecione uma opção';
+
+        campo.appendChild(vazio);
+
+        p.opcoes.forEach(opcao => {
+
+          const option = document.createElement('option');
+
+          option.value = opcao;
+
+          option.textContent = opcao;
+
+          campo.appendChild(option);
+
         });
-      } else {
-        if (campoResposta) campoResposta.focus();
+
+        campo.value = respostas[p.chave] || '';
+
+        campo.addEventListener('change', atualizarCampoOutro);
+
       }
+
+
+      // Campo de texto longo.
+
+      else if (p.tipo === 'textarea') {
+
+        campo = document.createElement('textarea');
+
+        campo.id = 'campoAtual';
+
+        campo.placeholder = p.placeholder;
+
+        campo.value = respostas[p.chave] || '';
+
+      }
+
+
+      // Campos simples.
+
+      else {
+
+        campo = document.createElement('input');
+
+        campo.id = 'campoAtual';
+
+        campo.type = p.tipo;
+
+        campo.placeholder = p.placeholder || '';
+
+        campo.value = respostas[p.chave] || '';
+
+        if (p.tipo === 'tel') {
+          campo.inputMode = 'tel';
+        }
+
+      }
+
+
+      campo.autocomplete = 'off';
+
+      el('areaCampo').appendChild(campo);
+
+
+      if (p.chave === 'tipoAcionamento') {
+        atualizarCampoOutro();
+      }
+
+
+      const permiteVoz =
+        p.tipo === 'text' ||
+        p.tipo === 'tel' ||
+        p.tipo === 'textarea';
+
+
+      el('botaoVoz').classList.toggle(
+        'oculto',
+        !permiteVoz
+      );
+
+
+      el('dica').textContent =
+        p.chave === 'relatoComplementar'
+          ? 'Este campo é opcional. Você pode falar um relato livre ou deixá-lo em branco.'
+          : (
+              permiteVoz
+                ? 'Toque no microfone para falar. Confira o texto reconhecido e corrija se necessário.'
+                : ''
+            );
+
+
+      el('voltar').disabled = indice === 0;
+
+      falar(p.texto);
+
+      if (p.tipo === 'text' || p.tipo === 'tel') {
+        campo.setAttribute('enterkeyhint', 'done');
+      }
+
     }
+
+
+    // ==================================================
+    // CAMPO OUTRO
+    // ==================================================
+
+    function atualizarCampoOutro() {
+
+      const existente = document.getElementById('areaOutro');
+
+      if (existente) existente.remove();
+
+      const seletor = document.getElementById('campoAtual');
+
+      if (!seletor || seletor.value !== 'Outro') return;
+
+      const area = document.createElement('div');
+
+      area.id = 'areaOutro';
+
+      const rotulo = document.createElement('label');
+
+      rotulo.textContent = 'Especifique o tipo de acionamento';
+
+      rotulo.htmlFor = 'campoOutro';
+
+      const campo = document.createElement('input');
+
+      campo.id = 'campoOutro';
+
+      campo.type = 'text';
+
+      campo.placeholder = 'Descreva o tipo de acionamento';
+
+      campo.value = respostas.outroAcionamento || '';
+
+      area.append(rotulo, campo);
+
+      el('areaCampo').appendChild(area);
+
+    }
+
+
+    // ==================================================
+    // RECONHECIMENTO DE VOZ
+    // ==================================================
 
     function ouvir() {
-      if (!modoVoz) return;
 
       if (!SpeechAPI) {
-        if (campoStatus) campoStatus.innerText = "Seu navegador não suporta reconhecimento de voz. Digite a resposta.";
-        if (campoResposta) campoResposta.focus();
+
+        el('status').textContent =
+          'Este navegador não oferece reconhecimento de voz. Você pode digitar a resposta.';
+
         return;
+
       }
 
-      if (ouvindo) return;
+      if (ouvindo) {
 
-      // Garante que o teclado não abra
-      if (campoResposta) campoResposta.blur();
+        pararVoz();
+
+        return;
+
+      }
+
+      const campo = el('campoAtual');
+
+      if (!campo) return;
+
+      campo.blur();
 
       reconhecimento = new SpeechAPI();
-      reconhecimento.lang = "pt-BR";
+
+      reconhecimento.lang = 'pt-BR';
+
       reconhecimento.continuous = false;
+
       reconhecimento.interimResults = false;
 
+      reconhecimento.maxAlternatives = 1;
+
       ouvindo = true;
-      if (botaoResponder) botaoResponder.disabled = true;
-      if (campoStatus) campoStatus.innerText = "🎤 Estou ouvindo... Fale agora.";
 
-      reconhecimento.onresult = function (evento) {
-        const texto = evento.results[0][0].transcript;
-        if (campoResposta) campoResposta.value = texto;
-        if (campoStatus) campoStatus.innerText = "Resposta captada: " + texto;
+      el('botaoVoz').textContent = '■ Parar de ouvir';
+
+      el('botaoVoz').classList.add('ativo');
+
+      el('status').textContent = '🎤 Ouvindo... fale agora.';
+
+
+      reconhecimento.onresult = evento => {
+
+        const transcrito =
+          evento.results[0][0].transcript.trim();
+
+        const anterior = campo.value.trim();
+
+        campo.value = anterior
+          ? anterior + ' ' + transcrito
+          : transcrito;
+
+        el('status').textContent =
+          'Resposta reconhecida. Confira o texto antes de continuar.';
+
       };
 
-      reconhecimento.onerror = function (evento) {
-        let msg = "Não foi possível captar a voz";
-        if (evento.error === "not-allowed") {
-          msg = "Permissão do microfone negada. Ative nas configurações do Safari.";
-        } else if (evento.error === "no-speech") {
-          msg = "Nenhuma fala detectada. Tente novamente.";
-        } else {
-          msg += ": " + evento.error;
+
+      reconhecimento.onerror = evento => {
+
+        let mensagem = 'Não foi possível reconhecer a voz.';
+
+        if (
+          evento.error === 'not-allowed' ||
+          evento.error === 'service-not-allowed'
+        ) {
+
+          mensagem =
+            'Permissão do microfone negada. Verifique as permissões do navegador.';
+
+        } else if (evento.error === 'no-speech') {
+
+          mensagem =
+            'Nenhuma fala foi detectada. Tente novamente ou digite.';
+
         }
-        if (campoStatus) campoStatus.innerText = msg + " Você também pode digitar.";
+
+        el('status').textContent = mensagem;
+
       };
 
-      reconhecimento.onend = function () {
+
+      reconhecimento.onend = () => {
+
         ouvindo = false;
-        if (botaoResponder) botaoResponder.disabled = false;
-        if (campoResposta && !campoResposta.value && campoStatus) {
-          campoStatus.innerText = "Você pode tentar novamente ou digitar sua resposta.";
-        }
+
+        el('botaoVoz').textContent = '🎤 Responder por voz';
+
+        el('botaoVoz').classList.remove('ativo');
+
       };
+
 
       try {
+
         reconhecimento.start();
+
       } catch (erro) {
+
         ouvindo = false;
-        if (botaoResponder) botaoResponder.disabled = false;
-        if (campoStatus) {
-          campoStatus.innerText = "Não foi possível iniciar o microfone. Digite sua resposta.";
-        }
+
+        el('botaoVoz').textContent = '🎤 Responder por voz';
+
+        el('botaoVoz').classList.remove('ativo');
+
+        el('status').textContent =
+          'Não foi possível iniciar o microfone. Digite a resposta.';
+
       }
+
     }
 
-    function proximo() {
-      const resposta = campoResposta ? campoResposta.value.trim() : "";
-      if (!resposta) {
-        if (campoStatus) {
-          campoStatus.innerText = "Por favor, informe uma resposta antes de continuar.";
+
+    // ==================================================
+    // PARAR MICROFONE
+    // ==================================================
+
+    function pararVoz() {
+
+      if (reconhecimento && ouvindo) {
+
+        try {
+          reconhecimento.stop();
+        } catch (e) {}
+
+      }
+
+      ouvindo = false;
+
+      if (el('botaoVoz')) {
+
+        el('botaoVoz').textContent = '🎤 Responder por voz';
+
+        el('botaoVoz').classList.remove('ativo');
+
+      }
+
+    }
+
+
+    // ==================================================
+    // SALVAR RESPOSTA ATUAL
+    // ==================================================
+
+    function salvarRespostaAtual() {
+
+      const p = perguntas[indice];
+
+      const campo = el('campoAtual');
+
+      let valor = campo ? campo.value.trim() : '';
+
+
+      if (
+        p.chave === 'tipoAcionamento' &&
+        valor === 'Outro'
+      ) {
+
+        const especificacao =
+          document.getElementById('campoOutro');
+
+        respostas.outroAcionamento =
+          especificacao
+            ? especificacao.value.trim()
+            : '';
+
+        if (!respostas.outroAcionamento) {
+
+          el('status').textContent =
+            'Informe qual é o outro tipo de acionamento.';
+
+          return false;
+
         }
-        return;
+
       }
 
-      if (ouvindo && reconhecimento) {
-        reconhecimento.stop();
+      else if (p.chave === 'tipoAcionamento') {
+
+        respostas.outroAcionamento = '';
+
       }
 
-      respostas[perguntas[indice].chave] = resposta;
+
+      if (p.chave === 'nomePaciente' && !valor) {
+
+        el('status').textContent =
+          'O Nome do Paciente é necessário para abrir a ocorrência.';
+
+        return false;
+
+      }
+
+
+      if (p.chave === 'tipoAcionamento' && !valor) {
+
+        el('status').textContent =
+          'Selecione o tipo de acionamento.';
+
+        return false;
+
+      }
+
+
+      respostas[p.chave] = valor;
+
+      return true;
+
+    }
+
+
+    // ==================================================
+    // PRÓXIMA PERGUNTA
+    // ==================================================
+
+    function continuar() {
+
+      pararVoz();
+
+      if (!salvarRespostaAtual()) return;
+
       indice++;
+
       mostrarPergunta();
+
     }
 
-    function finalizar() {
-      if (areaResposta) areaResposta.classList.add("oculto");
-      if (campoPergunta) campoPergunta.innerText = "Obrigado! Suas respostas foram registradas.";
-      if (progresso) progresso.innerText = "";
-      if (campoStatus) campoStatus.innerText = "Salvando informações na planilha...";
 
-      falar("Obrigado! Suas respostas foram registradas.");
-      salvarNaPlanilha();
-    }
+    // ==================================================
+    // VOLTAR PERGUNTA
+    // ==================================================
 
-function salvarNaPlanilha() {
-  if (!URL_BACKEND || URL_BACKEND.includes("COLE_AQUI") || URL_BACKEND.trim() === "") {
-    if (campoStatus) {
-      campoStatus.innerText = "Erro: URL do backend não configurada.";
-    }
-    return;
-  }
+    function voltar() {
 
-  campoStatus.innerText = "Salvando informações na planilha...";
+      pararVoz();
 
-  fetch(URL_BACKEND, {
-    method: "POST",
-    // Importante: usar text/plain evita o preflight CORS
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8"
-    },
-    body: JSON.stringify(respostas)
-  })
-  .then(function (resposta) {
-    return resposta.json();
-  })
-  .then(function (resultado) {
-    if (campoStatus) {
-      if (resultado.sucesso) {
-        campoStatus.innerText = "✅ Dados salvos com sucesso!";
-      } else {
-        campoStatus.innerText = "Erro ao salvar: " + resultado.mensagem;
+      if (indice > 0) {
+
+        const p = perguntas[indice];
+
+        const campo = el('campoAtual');
+
+        if (campo) {
+          respostas[p.chave] = campo.value.trim();
+        }
+
+        indice--;
+
+        mostrarPergunta();
+
       }
-    }
-  })
-  .catch(function (erro) {
-    if (campoStatus) {
-      campoStatus.innerText = "Erro de comunicação: " + erro.message;
-    }
-    console.error("Erro completo:", erro);
-  });
-}
 
-    // Eventos
-    if (botaoModoVoz) botaoModoVoz.onclick = () => iniciar(true);
-    if (botaoModoDigitando) botaoModoDigitando.onclick = () => iniciar(false);
-    if (botaoResponder) botaoResponder.onclick = ouvir;
-    if (botaoProximo) botaoProximo.onclick = proximo;
+    }
+
+
+    // ==================================================
+    // MONTAR RESUMO PARA CONFERÊNCIA
+    // ==================================================
+
+    function montarResumo() {
+
+      pararVoz();
+
+      mostrar('areaRevisao');
+
+      el('resumo').innerHTML = '';
+
+      perguntas.forEach((p, i) => {
+
+        let valor = respostas[p.chave] || '';
+
+        if (
+          p.chave === 'tipoAcionamento' &&
+          valor === 'Outro'
+        ) {
+
+          valor =
+            'Outro: ' + (respostas.outroAcionamento || '');
+
+        }
+
+        if (!valor) {
+          valor = 'Não informado';
+        }
+
+        const item = document.createElement('div');
+
+        item.className = 'resumo-item';
+
+        const titulo = document.createElement('div');
+
+        titulo.className = 'resumo-titulo';
+
+        titulo.textContent = p.texto;
+
+        const texto = document.createElement('div');
+
+        texto.className = 'resumo-valor';
+
+        texto.textContent = valor;
+
+        const botao = document.createElement('button');
+
+        botao.className = 'claro';
+
+        botao.type = 'button';
+
+        botao.textContent = 'Corrigir';
+
+        botao.addEventListener('click', () => {
+
+          indice = i;
+
+          mostrar('areaPergunta');
+
+          mostrarPergunta();
+
+        });
+
+        item.append(titulo, texto, botao);
+
+        el('resumo').appendChild(item);
+
+      });
+
+      el('status').textContent = '';
+
+    }
+
+
+    // ==================================================
+    // GRAVAR NO GOOGLE SHEETS
+    // ==================================================
+
+    async function gravar() {
+
+      if (envioEmAndamento) return;
+
+      if (!URL_BACKEND || !URL_BACKEND.includes('/exec')) {
+
+        el('status').textContent =
+          'URL do Apps Script não configurada corretamente.';
+
+        return;
+
+      }
+
+      envioEmAndamento = true;
+
+      el('gravar').disabled = true;
+
+      el('gravar').textContent = 'Gravando...';
+
+      el('status').textContent =
+        'Enviando os dados. Aguarde a confirmação...';
+
+
+      const dados = Object.assign(
+        {},
+        respostas,
+        { requestId: requestId }
+      );
+
+
+      try {
+
+        const resposta = await fetch(URL_BACKEND, {
+
+          method: 'POST',
+
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+
+          body: JSON.stringify(dados)
+
+        });
+
+
+        const resultado = await resposta.json();
+
+        if (!resultado.sucesso) {
+
+          throw new Error(
+            resultado.mensagem ||
+            'Não foi possível gravar a ocorrência.'
+          );
+
+        }
+
+
+        mostrar('areaFinal');
+
+        el('tituloFinal').textContent =
+          'Ocorrência registrada';
+
+        el('mensagemFinal').textContent =
+          resultado.duplicado
+            ? 'Este envio já havia sido gravado. Não foi criada outra linha.'
+            : 'Os dados foram gravados com sucesso na aba Página 2.';
+
+        el('status').textContent = '';
+
+        falar('Ocorrência registrada com sucesso.');
+
+      }
+
+      catch (erro) {
+
+        el('status').textContent =
+          'Não foi possível confirmar a gravação: ' +
+          erro.message +
+          '. Não feche esta página. Tente novamente.';
+
+      }
+
+      finally {
+
+        envioEmAndamento = false;
+
+        if (!el('areaFinal').classList.contains('oculto')) {
+          return;
+        }
+
+        el('gravar').disabled = false;
+
+        el('gravar').textContent =
+          'Tentar gravar novamente';
+
+      }
+
+    }
+
+
+    // ==================================================
+    // NOVA OCORRÊNCIA
+    // ==================================================
+
+    function novoRegistro() {
+
+      pararVoz();
+
+      respostas = {};
+
+      requestId = '';
+
+      indice = 0;
+
+      el('gravar').disabled = false;
+
+      el('gravar').textContent =
+        'Confirmar e gravar ocorrência';
+
+      el('status').textContent = '';
+
+      mostrar('inicio');
+
+    }
+
+
+    // ==================================================
+    // EVENTOS DOS BOTÕES
+    // ==================================================
+
+    el('iniciar').addEventListener(
+      'click',
+      iniciar
+    );
+
+    el('botaoVoz').addEventListener(
+      'click',
+      ouvir
+    );
+
+    el('continuar').addEventListener(
+      'click',
+      continuar
+    );
+
+    el('voltar').addEventListener(
+      'click',
+      voltar
+    );
+
+    el('gravar').addEventListener(
+      'click',
+      gravar
+    );
+
+    el('voltarPerguntas').addEventListener(
+      'click',
+      () => {
+        indice = 0;
+        mostrar('areaPergunta');
+        mostrarPergunta();
+      }
+    );
+
+    el('novoRegistro').addEventListener(
+      'click',
+      novoRegistro
+    );
+
   </script>
+
 </body>
 </html>
+
